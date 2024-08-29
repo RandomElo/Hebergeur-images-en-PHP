@@ -1,0 +1,79 @@
+#formEnregistrerImage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 18px;
+}
+#formEnregistrerImage button[type="submit"] {
+    margin-top: 10px;
+}
+#divErreur p {
+    margin-top: 5px;
+    color: red;
+    font-weight: bold;
+}
+#paragrapheAucuneImagesBDD {
+    margin-top: 10px;
+}
+/* GESTION DES DIFFERENTES PHOTOS */
+#paragrapheNbrPhotos {
+    margin-top: 10px;
+    margin-bottom: -10px;
+}
+#divImages {
+    margin-top: 5px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    /* width: 80%; */
+}
+.elementListeImage {
+    display: flex;
+    justify-content: space-between;
+}
+.imagesEspaceSauvegarde {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    margin-left: 20px;
+    width: 130px;
+    height: 150px;
+}
+/* FIN DE LA GESTION DES DIFFERENTS ELEMENT ENREGISTRER */
+#boutonAjouterImage {
+    display: flex;
+    width: 130px;
+    margin-left: auto;
+    margin-right: auto;
+}
+#boutonFermerFormulaire {
+    display: flex;
+    width: 144.067px;
+    margin-left: auto;
+    margin-right: auto;
+}
+/* GESTION DE LA JAUGE */
+#divJauge {
+    margin-bottom: 15px;
+}
+#espaceDispo {
+    margin-top: 10px;
+}
+
+.jauge-container {
+    width: 50%;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    overflow: hidden;
+    height: 25px;
+    box-shadow: inset 0 0 2px #000000;
+    margin: 10px auto 0 auto;
+}
+
+.jauge {
+    height: 100%;
+    width: 100%;
+    transition: width 0.5s;
+    background-color: #4caf50;
+}
