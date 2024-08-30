@@ -1,5 +1,16 @@
 <?php
-if (!empty($_COOKIE['utilisateur'])) {
+// Initialisation de la session
+session_set_cookie_params([
+    'lifetime' => 3600 * 24 * 2,           // Durée de vie du cookie, 0 signifie jusqu'à la fermeture du navigateur
+    'path' => '/',             // Chemin du cookie
+    'domain' => '',            // Domaine, laissez vide pour le domaine actuel
+    'secure' => true,          // Le cookie est envoyé uniquement via HTTPS
+    'httponly' => true,        // Le cookie n'est pas accessible via JavaScript
+    'samesite' => 'Strict'     // SameSite attribut, peut être 'Strict', 'Lax', ou 'None'
+]);
+session_start();
+include "fonctions/verifSession.php";
+if (!empty($_SESSION['utilisateur'])) {
     header('location: espace-sauvegarde');
     exit();
 }
@@ -28,9 +39,8 @@ if (isset($_POST['pseudo']) && isset($_POST['motdepasse'])) {
     $reqCreationCompte = $bdd->prepare('INSERT INTO utilisateurs(pseudo, mot_de_passe) VALUE (?,?)') or die(print_r($bdd->errorInfo(), true));
     $reqCreationCompte->execute([$pseudo, $motdePasseHash]);
     $idUtilisateur = $bdd->lastInsertId();
-    echo $idUtilisateur;
-    // Création du cookie
-    setcookie("utilisateur", $idUtilisateur, time() + 3600 * 24 * 2, '/', '', false, true);
+
+    $_SESSION['utilisateur'] = $idUtilisateur;
     header('location: espace-sauvegarde');
 }
 ?>

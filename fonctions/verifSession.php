@@ -4,13 +4,13 @@ try {
 } catch (Exception $erreur) {
     die('Erreur : ' . $erreur->getMessage());
 };
-if (!empty($_COOKIE['utilisateur'])) {
-    $cookie = $_COOKIE['utilisateur'];
+if (!empty($_SESSION['utilisateur'])) {
+    $sessionUtilisateur = $_SESSION['utilisateur'];
     $reqVerificationUtilisateur = $bdd->prepare('SELECT * FROM utilisateurs WHERE id = ?') or die(print_r($bdd->errorInfo(), true));
-    $reqVerificationUtilisateur->execute([$cookie]);
+    $reqVerificationUtilisateur->execute([$sessionUtilisateur]);
     $resultat = $reqVerificationUtilisateur->fetchAll();
     if (count($resultat) == 0) {
-        setcookie("utilisateur", "", time() - 3600, '/');
+        session_destroy();
         header('location: accueil');
         exit();
     }

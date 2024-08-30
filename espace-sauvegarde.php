@@ -1,7 +1,17 @@
 <?php
-include "fonctions/verifCookie.php";
-if (empty($_COOKIE['utilisateur'])) {
-    header('location: accueil');
+// Initialisation de la session
+session_set_cookie_params([
+    'lifetime' => 3600 * 24 * 2,           // Durée de vie du cookie, 0 signifie jusqu'à la fermeture du navigateur
+    'path' => '/',             // Chemin du cookie
+    'domain' => '',            // Domaine, laissez vide pour le domaine actuel
+    'secure' => true,          // Le cookie est envoyé uniquement via HTTPS
+    'httponly' => true,        // Le cookie n'est pas accessible via JavaScript
+    'samesite' => 'Strict'     // SameSite attribut, peut être 'Strict', 'Lax', ou 'None'
+]);
+session_start();
+include "fonctions/verifSession.php";
+if (empty($_SESSION['utilisateur'])) {
+    header('location: accueil?1');
     exit();
 }
 // Gestion de l'enregistrement de l'image
@@ -16,7 +26,7 @@ if (isset($_FILES['image'])) {
 
             // Verification si il reste de la place pour enregistrer de l'image
             $reqVerificationPlace = $bdd->prepare('SELECT * FROM utilisateurs WHERE id = ?') or die(print_r($bdd->errorInfo(), true));
-            $reqVerificationPlace->execute([$_COOKIE['utilisateur']]);
+            $reqVerificationPlace->execute([$_SESSION['utilisateur']]);
             $resultat = $reqVerificationPlace->fetch();
 
             // Calcul de la place restantae
@@ -27,10 +37,10 @@ if (isset($_FILES['image'])) {
                 move_uploaded_file($_FILES['image']['tmp_name'], 'public/images/' . $nomFichier);
                 // J'enregistre l'image dans la BDD
                 $reqSauvegardeImage = $bdd->prepare('INSERT INTO images(id_utilisateur, nom_image, taille) VALUE (?,?,?)') or die(print_r($bdd->errorInfo(), true));
-                $reqSauvegardeImage->execute([$_COOKIE['utilisateur'], $nomFichier, $tailleFichier]);
+                $reqSauvegardeImage->execute([$_SESSION['utilisateur'], $nomFichier, $tailleFichier]);
                 // Je change modifie l'espace disponbile de l'utilisateur
                 $reqChangementEspaceDisponible = $bdd->prepare('UPDATE utilisateurs SET espace_dispo = ? WHERE id = ?') or die(print_r($bdd->errorInfo(), true));
-                $reqChangementEspaceDisponible->execute([$calculEspaceDisponible, $_COOKIE['utilisateur']]);
+                $reqChangementEspaceDisponible->execute([$calculEspaceDisponible, $_SESSION['utilisateur']]);
             } else {
                 header('location: ?erreur=3');
                 exit();
@@ -70,7 +80,7 @@ if (isset($_FILES['image'])) {
         <?php
 
         $reqRecuperationTailleDispo = $bdd->prepare('SELECT espace_dispo from utilisateurs WHERE id = ?') or die(print_r($bdd->errorInfo(), true));
-        $reqRecuperationTailleDispo->execute([$_COOKIE['utilisateur']]);
+        $reqRecuperationTailleDispo->execute([$_SESSION['utilisateur']]);
         $resultat = $reqRecuperationTailleDispo->fetch();
 
         $pourcentageJauge = round(((int)$resultat['espace_dispo'] / 20000000) * 100);
@@ -109,7 +119,7 @@ if (isset($_FILES['image'])) {
     <div id="divAffichageImage">
         <?php
         $reqRecuperationImages = $bdd->prepare('SELECT * FROM images WHERE id_utilisateur = ?') or die(print_r($bdd->errorInfo(), true));
-        $reqRecuperationImages->execute([$_COOKIE['utilisateur']]);
+        $reqRecuperationImages->execute([$_SESSION['utilisateur']]);
         $resultat = $reqRecuperationImages->fetchAll();
 
         if (count($resultat) == 0) {

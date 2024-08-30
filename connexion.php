@@ -1,5 +1,16 @@
 <?php
-if (!empty($_COOKIE['utilisateur'])) {
+// Initialisation de la session
+session_set_cookie_params([
+    'lifetime' => 3600 * 24 * 2,           // Durée de vie du cookie, 0 signifie jusqu'à la fermeture du navigateur
+    'path' => '/',             // Chemin du cookie
+    'domain' => '',            // Domaine, laissez vide pour le domaine actuel
+    'secure' => true,          // Le cookie est envoyé uniquement via HTTPS
+    'httponly' => true,        // Le cookie n'est pas accessible via JavaScript
+    'samesite' => 'Strict'     // SameSite attribut, peut être 'Strict', 'Lax', ou 'None'
+]);
+session_start();
+
+if (!empty($_SESSION['utilisateur'])) {
     header('location: espace-sauvegarde');
     exit();
 }
@@ -21,9 +32,8 @@ if (isset($_POST['pseudo']) && isset($_POST['motdepasse'])) {
         exit();
     } elseif (count($resultat) == 1) {
         $utilisateur = $resultat[0];
-        echo $utilisateur[2];
         if (password_verify($motDePasse, $utilisateur[2])) {
-            setcookie('utilisateur', $utilisateur[0], time() + 3600 * 24 * 2, '/', '', false, true);
+            $_SESSION['utilisateur'] = $utilisateur[0];
             header('location: espace-sauvegarde');
             exit();
         } else {
